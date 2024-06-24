@@ -20,11 +20,9 @@ app.createServer = () => {
 
 app.handleResreq = (req, res) => {
 
-
     const parseURL = url.parse(req.url, true);
     const pathName = parseURL.pathname;
-
-    console.log(pathName)
+    const trimPath = pathName.replace(/^\/+|\/+$/g, '');
 
 
     res.end('Hello World\n');
