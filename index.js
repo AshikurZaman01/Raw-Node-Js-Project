@@ -1,5 +1,6 @@
 
 const http = require('http');
+const { parse } = require('path');
 const url = require('url');
 
 
@@ -20,9 +21,15 @@ app.createServer = () => {
 
 app.handleResreq = (req, res) => {
 
-    const parseURL = url.parse(req.url, true);
+    const parseURL = url.parse(req.url);
     const pathName = parseURL.pathname;
     const trimPath = pathName.replace(/^\/+|\/+$/g, '');
+    const method = req.method.toLowerCase();
+    const queryStringObj = parseURL.query;
+    const headersObj = req.headers;
+
+    console.log(headersObj);
+
 
 
     res.end('Hello World\n');
