@@ -1,6 +1,6 @@
 
 const http = require('http');
-const { parse } = require('path');
+const fs = require('fs');
 const url = require('url');
 
 
@@ -11,28 +11,23 @@ app.config = {
 }
 
 app.createServer = () => {
-
-    const server = http.createServer(app.handleResreq);
-
+    const server = http.createServer(app.handleResReq);
     server.listen(app.config.port, () => {
-        console.log(`Server running at http://localhost:${app.config.port}/`);
+        console.log(`server is running on http://localhost:${app.config.port}`);
     })
 }
 
-app.handleResreq = (req, res) => {
+app.handleResReq = (req, res) => {
 
-    const parseURL = url.parse(req.url);
+    const parseURL = url.parse(req.url, true);
     const pathName = parseURL.pathname;
-    const trimPath = pathName.replace(/^\/+|\/+$/g, '');
+    const trimmedPathName = pathName.replace(/^\/+|\/+$/g, '');
     const method = req.method.toLowerCase();
     const queryStringObj = parseURL.query;
     const headersObj = req.headers;
 
-    console.log(headersObj);
 
-
-
-    res.end('Hello World\n');
+    res.end('hello world');
 }
 
 app.createServer();
