@@ -2,6 +2,7 @@
 const http = require('http');
 const fs = require('fs');
 const url = require('url');
+const { StringDecoder } = require('string_decoder');
 
 
 const app = {}
@@ -27,7 +28,22 @@ app.handleResReq = (req, res) => {
     const headersObj = req.headers;
 
 
-    res.end('hello world');
+    const decoder = new StringDecoder('utf-8');
+    let realData = '';
+
+    req.on('data', (buffer) => {
+        realData += decoder.write(buffer);
+    })
+
+    req.on('end', () => {
+        realData += decoder.end();
+        console.log(realData);
+
+        res.end('hello world');
+
+    })
+
+
 }
 
 app.createServer();
