@@ -1,70 +1,18 @@
-const http = require('http');
-const fs = require('fs');
-const url = require('url');
-const { StringDecoder } = require('string_decoder');
-const routes = require('./Routess');
-const { notFoundHandler } = require('./RoutesHandler/notFoundHandler')
 
+const express = require('express');
+const app = express();
+const port = 3000;
+const path = require('path');
 
-const app = {}
-app.config = {
-    port: 3000
-}
+app.set('view engine', 'ejs');
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.createServer = () => {
-    const server = http.createServer(app.handleResReq);
-    server.listen(app.config.port, () => {
-        console.log(`server is running on http://localhost:${app.config.port}`);
-    })
-}
-app.handleResReq = (req, res) => {
-    const parseURL = url.parse(req.url, true);
-    const pathName = parseURL.pathname;
-    const trimmedPathName = pathName.replace(/^\/+|\/+$/g, '');
-    const method = req.method.toLowerCase();
-    const queryStringObj = parseURL.query;
-    const headersObj = req.headers;
+app.get('/', (req, res) => {
+    res.render('index');
+})
 
-    const requestProperties = {
-        parseURL,
-        pathName,
-        trimmedPathName,
-        method,
-        queryStringObj,
-        headersObj,
-    }
-
-
-    res.end('hello world');
-    const decoder = new StringDecoder('utf-8');
-    let realData = '';
-
-
-    const choseHandler = routes[trimmedPathName] ? routes[trimmedPathName] : notFoundHandler;
-
-
-
-    req.on('data', (buffer) => {
-        realData += decoder.write(buffer);
-    })
-
-    req.on('end', () => {
-        realData += decoder.end();
-
-        choseHandler(requestProperties, (statusCode, payload) => {
-
-            statusCode = typeof (statusCode) == 'number' ? statusCode : 500;
-            payload = typeof (payload) == 'object' ? payload : {};
-
-            const payloadString = JSON.stringify(payload);
-
-            res.writeHead(statusCode);
-            res.end(payloadString);
-        })
-
-    })
-
-
-}
-
-app.createServer();
+app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+})
