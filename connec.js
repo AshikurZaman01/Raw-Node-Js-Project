@@ -55,8 +55,14 @@ app.post('/products', async (req, res) => {
 
 app.get('/products', async (req, res) => {
     try {
-        const products = await Product.find({ price: { $ne: 90000 } });
-        res.status(200).send(products);
+        const price = req.query.price;
+        if (price) {
+            const products = await Product.find({ price: { $gte: price } }).countDocuments();
+            res.status(200).send(products);
+        } else {
+            const products = await Product.find().sort({ price: 'desc' })
+            res.status(200).send(products);
+        }
     } catch (error) {
         res.status(500).send({
             message: 'Error retrieving products',
