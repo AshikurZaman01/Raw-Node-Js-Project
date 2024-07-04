@@ -85,8 +85,42 @@ app.get('/products/:id', async (req, res) => {
             error: error.message
         });
     }
-
 })
+
+app.delete('/products/:id', async (req, res) => {
+    try {
+
+        const id = req.params.id;
+        const products = await Product.deleteOne({ _id: id });
+        res.status(200).send(products);
+
+    } catch (error) {
+        res.status(500).send({
+            message: 'Error retrieving products',
+            error: error.message
+        })
+    }
+})
+
+app.put('/products/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const updatedProduct = await Product.updateOne({ _id: id }, {
+            $set: {
+                title: req.body.title,
+                description: req.body.description,
+                price: req.body.price
+            }
+        }, { new: true });
+        res.status(200).send(updatedProduct);
+    } catch (error) {
+        res.status(500).send({
+            message: 'Error retrieving products',
+            error: error.message
+        })
+    }
+})
+
 
 app.listen(port, async () => {
     console.log(`Server is running on port ${port}`);
